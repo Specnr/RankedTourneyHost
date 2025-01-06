@@ -23,7 +23,14 @@ export async function GET(req: Request) {
 // Create Event
 export async function POST(req: Request) {
   const res = await req.json()
-  if (!res.auth || res.auth != process.env.ADMIN_KEY) {
+
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return new Response("Auth key required", { status: 401 })
+  }
+
+  const authKey = authHeader.split(" ")[1]
+  if (authKey !== process.env.ADMIN_KEY) {
     return new Response("Invalid auth key", { status: 401 })
   }
 
