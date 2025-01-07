@@ -1,42 +1,42 @@
-export const getEventWithSecret = async (secret: string) => {
+const sendSafeRequest = async (endpoint: string, options: RequestInit) => {
   try {
-    const resp = await fetch("/api/events", {
-      method: "GET",
-      headers: {
-        'Authorization': `Bearer ${secret}`,
-      },
-    })
+    const resp = await fetch(endpoint, options)
 
     if (!resp.ok) {
       return false
     }
 
-    const events = (await resp.json()).events
-    if (!events || !Array.isArray(events) || events.length === 0) {
-      return false
-    }
-    return events[0]
+    return await resp.json()
   } catch {
     return false
   }
 }
 
-export const getMatchesFromIGN = async (ign: string) => {
-  const endpoint = `https://mcsrranked.com/api/users/${ign}/matches?count=50&type=3`
-  try {
-    const resp = await fetch(endpoint)
+export const getEventWithSecret = async (secret: string) => {
+  const data = await sendSafeRequest("/api/events", {
+    headers: {
+      'Authorization': `Bearer ${secret}`,
+    },
+  })
 
-    if (!resp.ok) {
-      return false
-    }
-
-    const data = await resp.json()
-    if (data.status !== "success") {
-      return false
-    }
-
-    return data.data
-  } catch {
+  if (!data || !data.events || !Array.isArray(data.events) || data.events.length === 0) {
     return false
   }
+
+  return data.events[0]
+}
+
+export const getMatchesFromIGN = async (ign: string) => {
+  const endpoint = `https://mcsrranked.com/api/users/${ign}/matches?count=50&type=3`
+  const data = await sendSafeRequest(endpoint, {
+    headers: {
+      "API-Key": process.env.RANKED_API_KEY || ""
+    }
+  })
+
+  if (!data || data.status !== "success") {
+    return false
+  }
+
+  return data.data
 }
