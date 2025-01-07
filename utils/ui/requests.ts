@@ -20,3 +20,23 @@ export const getEventWithSecret = async (secret: string) => {
     return false
   }
 }
+
+export const getMatchesFromIGN = async (ign: string) => {
+  const endpoint = `https://mcsrranked.com/api/users/${ign}/matches?count=50&type=3`
+  try {
+    const resp = await fetch(endpoint)
+
+    if (!resp.ok) {
+      return false
+    }
+
+    const data = await resp.json()
+    if (data.status !== "success") {
+      return false
+    }
+
+    return data.data
+  } catch {
+    return false
+  }
+}
