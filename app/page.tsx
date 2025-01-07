@@ -11,6 +11,8 @@ const Page = () => {
   const [event, setEvent] = useState<Event | null>(null);
   const [eventSecret, setEventSecret] = useState("");
 
+  const matches = event ? event.matches || [] : []
+
   return (
     <div className="w-full grid grid-cols-6 gap-4">
       <div className="col-start-2 col-span-4">
@@ -22,10 +24,10 @@ const Page = () => {
         />
       </div>
       <div className="col-start-2 col-span-2">
-        <SelectedEventList matches={event ? event.matches || [] : []} />
+        <SelectedEventList matches={matches} />
       </div>
       <div className="col-start-4 col-span-2">
-        <AddMatchesInputBox />
+        <AddMatchesInputBox selectedMatches={matches} />
       </div>
     </div>
   );

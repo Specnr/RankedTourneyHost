@@ -3,11 +3,16 @@ import { useState } from "react"
 import { Container } from "@/components/Container"
 import { getMatchesFromIGN } from "@/utils/ui/requests";
 import { MatchEntry } from "./MatchEntry";
+import { Match } from "@/utils/interfaces/Match"
 
-export const AddMatchesInputBox = () => {
+interface Props {
+  selectedMatches: number[]
+}
+
+export const AddMatchesInputBox = ({ selectedMatches }: Props) => {
   const [ign, setIgn] = useState("")
   const [errorMessage, setErrorMessage] = useState("");
-  const [matches, setMatches] = useState([])
+  const [matches, setMatches] = useState<Match[]>([])
 
   const handleUpdate = async () => {
     if (!ign) {
@@ -18,12 +23,16 @@ export const AddMatchesInputBox = () => {
     setErrorMessage(""); // Clear any previous error
 
     const fetchedMatches = await getMatchesFromIGN(ign)
-    if (!fetchedMatches) {
+    if (!fetchedMatches || !Array.isArray(fetchedMatches)) {
       setErrorMessage("Request failed, try again later");
       return;
     }
 
-    setMatches(fetchedMatches)
+    const filteredMatches: Match[] = fetchedMatches.filter(
+      (item: Match) => !selectedMatches.includes(item.id)
+    )
+
+    setMatches(filteredMatches)
   }
 
   return (
