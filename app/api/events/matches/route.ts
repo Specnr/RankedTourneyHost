@@ -1,4 +1,5 @@
 import { overwriteMatches } from "@/utils/events"
+import { Match } from "@/utils/interfaces/Match"
 
 export const revalidate = 10
 
@@ -10,6 +11,12 @@ export async function PUT(req: Request) {
 
   if (!res.secret || !res.matches || !Array.isArray(res.matches) || res.matches.length > MAX_MATCHES_LENGTH) {
     return new Response("Invalid input", { status: 400 })
+  }
+
+  for (const match of res.matches as Match[]) {
+    if (!match.id || !match.date || !match.result || !match.result.time) {
+      return new Response(`Invalid match: ${match}`, { status: 400 })
+    }
   }
 
   const updatRes = await overwriteMatches(res.secret, res.matches)

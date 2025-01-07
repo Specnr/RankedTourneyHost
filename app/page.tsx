@@ -12,6 +12,7 @@ const Page = () => {
   const [eventSecret, setEventSecret] = useState("");
 
   const matches = event ? event.matches || [] : []
+  const matchIds = new Set(matches.map((m) => m.id))
 
   return (
     <div className="w-full grid grid-cols-6 gap-4">
@@ -27,7 +28,7 @@ const Page = () => {
         <SelectedEventList matches={matches} />
       </div>
       <div className="col-start-4 col-span-2">
-        <AddMatchesInputBox selectedMatches={matches} />
+        <AddMatchesInputBox selectedMatches={matchIds} />
       </div>
     </div>
   );

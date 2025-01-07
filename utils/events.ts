@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb";
 import randomstring from "randomstring";
+import { Match } from "./interfaces/Match";
 
 const db = new MongoClient(process.env.MONGO_URI ?? "").db();
 const EventsCol = db.collection("Events")
@@ -15,10 +16,12 @@ export const upsertEvent = async (name: string, format: string, givenSecret?: st
   return res.acknowledged ? secret : null;
 }
 
-export const overwriteMatches = async (secret: string, matches: number[]) => {
+export const overwriteMatches = async (secret: string, matches: Match[]) => {
+  const sortedMatches = matches.sort((a, b) => b.date - a.date)
+
   const res = await EventsCol.updateOne(
     { secret },
-    { $set: { ["matches"]: matches, lastUpdated: Date.now() } }
+    { $set: { ["matches"]: sortedMatches, lastUpdated: Date.now() } }
   )
 
   return res.matchedCount > 0

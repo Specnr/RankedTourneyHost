@@ -6,7 +6,7 @@ import { MatchEntry } from "./MatchEntry";
 import { Match } from "@/utils/interfaces/Match"
 
 interface Props {
-  selectedMatches: number[]
+  selectedMatches: Set<number>
 }
 
 export const AddMatchesInputBox = ({ selectedMatches }: Props) => {
@@ -29,7 +29,7 @@ export const AddMatchesInputBox = ({ selectedMatches }: Props) => {
     }
 
     const filteredMatches: Match[] = fetchedMatches.filter(
-      (item: Match) => !selectedMatches.includes(item.id)
+      (item: Match) => !selectedMatches.has(item.id)
     )
 
     setMatches(filteredMatches)
@@ -64,11 +64,11 @@ export const AddMatchesInputBox = ({ selectedMatches }: Props) => {
       >
         Update
       </button>
-      {
-        matches.map(
-          (match, idx) => <MatchEntry match={match} key={idx} />
-        )
-      }
+      <div className="max-h-[300px] overflow-y-auto">
+        {matches.map((match, idx) => (
+          <MatchEntry match={match} key={idx} />
+        ))}
+      </div>
     </Container>
   )
 }
