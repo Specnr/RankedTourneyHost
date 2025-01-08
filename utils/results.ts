@@ -34,6 +34,7 @@ export const tabulateResults = async (matches: Match[]) => {
     })
   })
 
+  // Order by completion count, then latest round played, then latest round time
   const playerRankings = playerToPlayerData.values().toArray().toSorted((a, b) => {
     if (a.numCompletions !== b.numCompletions) {
       return b.numCompletions - a.numCompletions
