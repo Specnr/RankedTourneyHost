@@ -6,13 +6,23 @@ import { MatchEntry } from "./MatchEntry";
 import { Match } from "@/utils/interfaces/Match"
 
 interface Props {
-  selectedMatches: Set<number>
+  selectedMatches: Match[]
+  addMatch: (match: Match) => void
 }
 
-export const AddMatchesInputBox = ({ selectedMatches }: Props) => {
+export const AddMatchesInputBox = ({ selectedMatches, addMatch }: Props) => {
   const [ign, setIgn] = useState("")
   const [errorMessage, setErrorMessage] = useState("");
   const [matches, setMatches] = useState<Match[]>([])
+
+  const softUpdate = () => {
+    const matchIds = new Set(selectedMatches.map((m) => m.id))
+    const filteredMatches: Match[] = matches.filter(
+      (item: Match) => !matchIds.has(item.id)
+    )
+
+    setMatches(filteredMatches)
+  }
 
   const handleUpdate = async () => {
     if (!ign) {
@@ -28,8 +38,9 @@ export const AddMatchesInputBox = ({ selectedMatches }: Props) => {
       return;
     }
 
+    const matchIds = new Set(selectedMatches.map((m) => m.id))
     const filteredMatches: Match[] = fetchedMatches.filter(
-      (item: Match) => !selectedMatches.has(item.id)
+      (item: Match) => !matchIds.has(item.id)
     )
 
     setMatches(filteredMatches)
@@ -66,7 +77,10 @@ export const AddMatchesInputBox = ({ selectedMatches }: Props) => {
       </button>
       <div className="max-h-[300px] overflow-y-auto">
         {matches.map((match, idx) => (
-          <MatchEntry match={match} key={idx} />
+          <MatchEntry isAdding match={match} key={idx} handleMatchChange={() => {
+            addMatch(match)
+            softUpdate()  // Update the UI without repinging the backend
+          }} />
         ))}
       </div>
     </Container>

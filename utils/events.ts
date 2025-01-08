@@ -17,7 +17,7 @@ export const upsertEvent = async (name: string, format: string, givenSecret?: st
 }
 
 export const overwriteMatches = async (secret: string, matches: Match[]) => {
-  const sortedMatches = matches.sort((a, b) => b.date - a.date)
+  const sortedMatches = matches.sort((a, b) => a.date - b.date)
 
   const res = await EventsCol.updateOne(
     { secret },

@@ -8,7 +8,6 @@ export const uuidToIGN = async (uuid: string) => {
   const endpoint = `https://playerdb.co/api/player/minecraft/${uuid}`
   try {
     const resp = await fetch(endpoint)
-    console.log(resp)
 
     if (!resp.ok) {
       return DEFAULT_IGN

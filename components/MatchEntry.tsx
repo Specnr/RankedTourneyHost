@@ -5,12 +5,15 @@ import { Match } from "@/utils/interfaces/Match"
 import { uuidToHead, uuidToIGN } from "@/utils/ui/uuid"
 import { msToTime } from "@/utils/ui/timing"
 import { Spinner } from "./Spinner";
+import { Minus, Plus } from "./SVGs";
 
 interface Props {
+  isAdding: boolean
+  handleMatchChange: () => void
   match: Match
 }
 
-export const MatchEntry = ({ match }: Props) => {
+export const MatchEntry = ({ match, handleMatchChange, isAdding }: Props) => {
   const [ign, setIgn] = useState(null)
   const [loading, setLoading] = useState(true);
 
@@ -23,10 +26,6 @@ export const MatchEntry = ({ match }: Props) => {
 
     fetchData();
   }, [match.result.uuid])
-
-  const handleButtonClick = () => {
-    console.log("click")
-  }
 
   if (loading){
     return <Spinner />
@@ -45,21 +44,12 @@ export const MatchEntry = ({ match }: Props) => {
             className="rounded bg-blue-500 hover:bg-blue-600 text-white text-sm"
             onClick={(e) => {
               e.stopPropagation(); // Prevent triggering the parent div's onClick
-              handleButtonClick();
+              handleMatchChange();
             }}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                fillRule="evenodd"
-                d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z"
-                clipRule="evenodd"
-              />
-            </svg>
+            {
+              isAdding ? <Plus /> : <Minus />
+            }
           </button>
         </div>
         <p className="row-span-1 col-span-7 inline-flex items-center space-x-2">
