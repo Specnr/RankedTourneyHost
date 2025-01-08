@@ -47,7 +47,7 @@ const Page = () => {
         event && (
           <>
             <div className="col-start-2 col-span-2">
-              <SelectedEventList matches={matches} removeMatch={handleUpdateMatches} />
+              <SelectedEventList matches={matches} removeMatch={handleUpdateMatches} secret={eventSecret} />
             </div>
             <div className="col-start-4 col-span-2">
               <AddMatchesInputBox selectedMatches={matches} addMatch={handleUpdateMatches} />

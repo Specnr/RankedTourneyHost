@@ -19,10 +19,17 @@ export async function PUT(req: Request) {
     }
   }
 
-  const updatRes = await overwriteMatches(res.secret, res.matches)
+  // Only save what we need
+  const mappedMatches: Match[] = res.matches.map((m: Match) => ({
+    id: m.id,
+    date: m.date,
+    result: m.result
+  }))
+
+  const updatRes = await overwriteMatches(res.secret, mappedMatches)
   if (!updatRes) {
     return new Response("Event not found", { status: 404 })
   }
 
-  return new Response("Success", { status: 200 })
+  return Response.json({ success: true })
 }

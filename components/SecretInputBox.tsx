@@ -66,8 +66,8 @@ export const SecretInputBox = ({ event, setEvent, eventSecret, setEventSecret }:
       {event && (
         <div className="mt-6 text-center text-white">
           <h2 className="text-xl">Event Details</h2>
-          <p><strong>Event ID:</strong> {event._id}</p>
           <p><strong>Event Name:</strong> {event.name}</p>
+          <p><strong>Event Format:</strong> {event.format}</p>
         </div>
       )}
     </Container>

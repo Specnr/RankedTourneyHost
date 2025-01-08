@@ -1,3 +1,5 @@
+import { Match } from "../interfaces/Match"
+
 const sendSafeRequest = async (endpoint: string, options: RequestInit) => {
   try {
     const resp = await fetch(endpoint, options)
@@ -10,6 +12,18 @@ const sendSafeRequest = async (endpoint: string, options: RequestInit) => {
   } catch {
     return false
   }
+}
+
+export const updateEventMatchList = async (secret: string, matches: Match[]) => {
+  const resp = await sendSafeRequest("/api/events/matches", {
+    method: "PUT",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ secret, matches })
+  })
+
+  return !!resp
 }
 
 export const getEventWithSecret = async (secret: string) => {
