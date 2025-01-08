@@ -54,3 +54,18 @@ export const getMatchesFromIGN = async (ign: string) => {
 
   return data.data
 }
+
+export const getMatchFromId = async (matchId: number) => {
+  const endpoint = `https://mcsrranked.com/api/matches/${matchId}`
+  const data = await sendSafeRequest(endpoint, {
+    headers: {
+      "API-Key": process.env.RANKED_API_KEY || ""
+    }
+  })
+
+  if (!data || data.status !== "success") {
+    return false
+  }
+
+  return data.data
+}

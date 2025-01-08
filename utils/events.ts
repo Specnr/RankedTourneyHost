@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import randomstring from "randomstring";
 import { Match } from "./interfaces/Match";
 
@@ -29,6 +29,9 @@ export const overwriteMatches = async (secret: string, matches: Match[]) => {
 
 export const getEventBySecret = async (secret: string) =>
   await EventsCol.findOne({ secret }, { projection: { secret: 0 } })
+
+export const getEventById = async (id: ObjectId) =>
+  await EventsCol.findOne({ _id: id }, { projection: { secret: 0 } })
 
 export const getEventList = async (size: number = DEFAULT_PAGE_SIZE) =>
   await EventsCol
