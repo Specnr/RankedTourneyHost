@@ -75,7 +75,7 @@ export const AddMatchesInputBox = ({ selectedMatches, addMatch }: Props) => {
       >
         Update
       </button>
-      <div className="max-h-[300px] overflow-y-auto">
+      <div className="max-h-[500px] overflow-y-auto">
         {matches.map((match, idx) => (
           <MatchEntry isAdding match={match} key={idx} handleMatchChange={() => {
             addMatch(match)

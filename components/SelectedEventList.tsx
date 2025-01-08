@@ -50,15 +50,17 @@ export const SelectedEventList = ({ matches, removeMatch, secret }: Props) => {
         Save Changes
       </button>
 
-      {
-        matches.map((match, idx) =>
-          <MatchEntry
-            key={idx}
-            match={match}
-            isAdding={false}
-            handleMatchChange={() => removeMatch(match)}
-          />)
-      }
+      <div className="max-h-[500px] overflow-y-auto">
+        {
+          matches.map((match, idx) =>
+            <MatchEntry
+              key={idx}
+              match={match}
+              isAdding={false}
+              handleMatchChange={() => removeMatch(match)}
+            />)
+        }
+      </div>
     </Container>
   )
 }
