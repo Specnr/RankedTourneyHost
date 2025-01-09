@@ -29,9 +29,30 @@ export interface DetailedMatch extends Match {
   completions: Result[]
 }
 
+export interface PlayerPoints {
+  uuid: string,
+  points: number,
+  sumOfPoints: number
+  placement?: number
+  placementsMoved?: number
+}
+
 export interface PlayerResultAggregate {
   uuid: string
   numCompletions: number
   latestRoundPlayed: number
   latestRoundTime: number
+  completionList: number[]
+}
+
+export interface Format {
+  avg: boolean
+  drop: {
+    low: number
+    high: number
+  }
+  points: {
+    first: number
+    last: number
+  }
 }
