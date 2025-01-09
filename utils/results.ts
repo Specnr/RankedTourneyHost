@@ -48,7 +48,7 @@ export const getDetailedMatches = async (matches: Match[], verbose: boolean) => 
 
 // Interpolate points based on start, end, idx and length
 export const getPointsForPlaceInRound = (format: Format, idx: number, len: number) => (
-  Math.ceil(format.points.first + ((format.points.last - format.points.first) / (len - 1)) * idx)
+  Math.round(format.points.first + ((format.points.last - format.points.first) / (len - 1)) * idx)
 )
 
 export const avgPlayerSort = (a: PlayerResultAggregate, b: PlayerResultAggregate) => {
@@ -79,7 +79,7 @@ export const calculatePointPlacements = (roundPoints: Map<string, PlayerPoints>,
 
   // Hydrate current round's placements
   sortedPoints.forEach((pp, idx) => {
-    const placement = idx + 1
+    const placement = pp.placement || idx + 1
     let placementsMoved = 0;
     if (prevRoundPoints) {
       placementsMoved = prevRoundPoints.get(pp.uuid)!.placement! - placement
@@ -169,6 +169,7 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
             points: 0,
             uuid: uuid,
             sumOfPoints: prevRoundPoints?.sumOfPoints || 0,
+            placement: round.completions.length + 1
           })
         }
       })
