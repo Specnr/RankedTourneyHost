@@ -40,7 +40,7 @@ export const AddMatchesInputBox = ({ selectedMatches, addMatch }: Props) => {
 
     const matchIds = new Set(selectedMatches.map((m) => m.id))
     const filteredMatches: Match[] = fetchedMatches.filter(
-      (item: Match) => !matchIds.has(item.id)
+      (item: Match) => !matchIds.has(item.id) && !!item.result.uuid
     )
 
     setMatches(filteredMatches)

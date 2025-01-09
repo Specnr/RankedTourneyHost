@@ -14,7 +14,7 @@ export async function PUT(req: Request) {
   }
 
   for (const match of res.matches as Match[]) {
-    if (!match.id || !match.date || !match.result || !match.result.time) {
+    if (!match.id || !match.date || !match.result || !match.result.time || !match.result.uuid) {
       return new Response(`Invalid match: ${match}`, { status: 400 })
     }
   }
