@@ -1,6 +1,6 @@
 import { Match } from "../interfaces/Match"
 
-const sendSafeRequest = async (endpoint: string, options: RequestInit) => {
+const sendSafeRequest = async (endpoint: string, options?: RequestInit) => {
   try {
     const resp = await fetch(endpoint, options)
 
@@ -38,6 +38,16 @@ export const getEventWithSecret = async (secret: string) => {
   }
 
   return data.events[0]
+}
+
+export const getEventList = async () => {
+  const data = await sendSafeRequest(`${process.env.HOST}/api/events`)
+
+  if (!data || !data.events || !Array.isArray(data.events) || data.events.length === 0) {
+    return false
+  }
+
+  return data.events
 }
 
 export const getMatchesFromIGN = async (ign: string) => {

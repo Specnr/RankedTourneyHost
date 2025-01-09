@@ -9,7 +9,8 @@ export async function GET(req: Request) {
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     const count = searchParams.get('count') || ""
-    return Response.json({ events: await getEventList(Number.parseInt(count) || undefined) })
+    const events = await getEventList(Number.parseInt(count) || undefined)
+    return Response.json({ events })
   }
 
   const secret = authHeader.split(" ")[1]
