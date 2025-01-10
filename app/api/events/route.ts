@@ -7,12 +7,14 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const authHeader = req.headers.get("Authorization");
 
+  // Get full Event list
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     const count = searchParams.get('count') || ""
     const events = await getEventList(Number.parseInt(count) || undefined)
     return Response.json({ events })
   }
 
+  // Get Event by secret
   const secret = authHeader.split(" ")[1]
   const event = await getEventBySecret(secret)
   if (!event) {

@@ -50,6 +50,16 @@ export const getEventList = async () => {
   return data.events
 }
 
+export const getResultsFromEventId = async (eventId: string) => {
+  const data = await sendSafeRequest(`/api/results?eventId=${eventId}`)
+
+  if (!data || !data.results || !Array.isArray(data.results) || data.results.length === 0) {
+    return false
+  }
+
+  return data
+}
+
 export const getMatchesFromIGN = async (ign: string) => {
   const endpoint = `https://mcsrranked.com/api/users/${ign}/matches?count=50&type=3`
   const data = await sendSafeRequest(endpoint, {

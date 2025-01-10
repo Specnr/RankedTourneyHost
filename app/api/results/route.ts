@@ -26,5 +26,5 @@ export async function GET(req: Request) {
 
   const fullResults = await tabulateResults(event.matches || [], format, !!searchParams.get('verbose'))
 
-  return Response.json({ ...fullResults })
+  return Response.json({ name: event.name, ...fullResults })
 }
