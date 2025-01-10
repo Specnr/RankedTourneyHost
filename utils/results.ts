@@ -1,26 +1,26 @@
 import { DetailedMatch, Format, Match, PlayerPoints, PlayerResultAggregate } from "./interfaces/Match";
 import { getMatchFromId } from "./ui/requests";
 
-export const parseEventFormat = (format: string) => {
-  const formatDetails: Format = {
+export const parseEventFormat = (formatStr: string) => {
+  const format: Format = {
     avg: false,
     drop: { low: -1, high: -1 },
     points: { first: -1, last: -1 }
   }
 
-  const ops = format.split(";")
+  const ops = formatStr.split(";")
   for (const op of ops) {
     if (op === "AVG") {
-      formatDetails.avg = true
+      format.avg = true
     } else if (op.startsWith("DROP")) {
       const dropOptions = op.split("(")[1].split(")")[0].split(",")
-      formatDetails.drop = {
+      format.drop = {
         low: Number.parseInt(dropOptions[0]),
         high: Number.parseInt(dropOptions[1])
       }
     } else if (op.startsWith("POINTS")) {
       const pointsOptions = op.split("(")[1].split(")")[0].split(",")
-      formatDetails.points = {
+      format.points = {
         first: Number.parseInt(pointsOptions[0]),
         last: Number.parseInt(pointsOptions[1]),
         max: pointsOptions.length === 3 ? Number.parseInt(pointsOptions[2]) : undefined,
@@ -30,7 +30,17 @@ export const parseEventFormat = (format: string) => {
     }
   }
 
-  return formatDetails
+  // Points and drop / avg are mutually exclusive
+  if (format.points.first > 0 && (format.avg || format.drop.high > 0 || format.drop.low > 0)) {
+    throw new Error("Unsupported combination")
+  }
+
+  // Cant use drop without average
+  if ((format.drop.high > 0 || format.drop.low > 0) && !format.avg) {
+    throw new Error("Unsupported combination")
+  }
+
+  return format
 }
 
 export const getDetailedMatches = async (matches: Match[], verbose: boolean) => {
