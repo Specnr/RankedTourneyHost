@@ -67,6 +67,11 @@ export const avgPlayerSort = (a: PlayerResultAggregate, b: PlayerResultAggregate
     return b.numCompletions - a.numCompletions
   }
 
+  // If one is 0 the other will be too since numCompletions is equal
+  if (a.completionList.length === 0 && b.completionList.length === 0) {
+    return 0
+  }
+
   const aAvg = a.completionList.reduce((prev, cur) => prev + cur / a.completionList.length)
   const bAvg = b.completionList.reduce((prev, cur) => prev + cur / b.completionList.length)
 
@@ -123,6 +128,30 @@ export const getAllPlayersFromMatches = (matches: DetailedMatch[]) => {
   return allPlayers
 }
 
+export const dropCompletionsBasedOnFormat = (playerToPlayerData: Map<string, PlayerResultAggregate>, format: Format, matchCount: number) => {
+  // Skip if total drop >= than the rounds played
+  if (format.drop.high + format.drop.low >= matchCount) {
+    return
+  }
+
+  playerToPlayerData.keys().forEach(uuid => {
+    const playerData = playerToPlayerData.get(uuid)!
+    const dnfs = matchCount - playerData.completionList.length
+    // Could do some min/max heap shit here if length was big
+    playerData.completionList.sort()
+
+    for (let i = 0; i < (format.drop.low - dnfs); i++) {
+      playerData.completionList.pop()
+    }
+
+    for (let i = 0; i < format.drop.high; i++) {
+      playerData.completionList.splice(0, 1)
+    }
+
+    playerToPlayerData.set(uuid, playerData)
+  })
+}
+
 export const tabulateResults = async (matches: Match[], format: Format, verbose: boolean) => {
   const detailedMatches = await getDetailedMatches(matches, verbose)
   const playerToPlayerData = new Map<string, PlayerResultAggregate>()
@@ -130,8 +159,7 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
   const allPlayers = getAllPlayersFromMatches(detailedMatches)
 
   const isUsingPoints = format.points.first > 0
-
-  // TODO: Drop completions from matches here
+  const isDropping = format.drop.high > 0 || format.drop.low > 0
 
   detailedMatches.forEach((round, i) => {
     const roundPoints = new Map<string, PlayerPoints>()
@@ -190,6 +218,10 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
       allRoundsPoints.push(calculatePointPlacements(roundPoints, i > 0 ? allRoundsPoints[i - 1] : undefined))
     }
   })
+
+  if (isDropping) {
+    dropCompletionsBasedOnFormat(playerToPlayerData, format, detailedMatches.length)
+  }
 
   if (isUsingPoints) {
     const allRoundPointsArr = convertRoundPointsMapToSortedArrays(allRoundsPoints)
