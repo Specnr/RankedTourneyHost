@@ -22,7 +22,8 @@ export const parseEventFormat = (format: string) => {
       const pointsOptions = op.split("(")[1].split(")")[0].split(",")
       formatDetails.points = {
         first: Number.parseInt(pointsOptions[0]),
-        last: Number.parseInt(pointsOptions[1])
+        last: Number.parseInt(pointsOptions[1]),
+        max: pointsOptions.length === 3 ? Number.parseInt(pointsOptions[2]) : undefined,
       }
     } else {
       throw new Error("Unsupported operation")
@@ -48,7 +49,7 @@ export const getDetailedMatches = async (matches: Match[], verbose: boolean) => 
 
 // Interpolate points based on start, end, idx and length
 export const getPointsForPlaceInRound = (format: Format, idx: number, len: number) => (
-  Math.round(format.points.first + ((format.points.last - format.points.first) / (len - 1)) * idx)
+  Math.round(format.points.first + ((format.points.last - format.points.first) / (Math.max(len - 1, 1))) * idx)
 )
 
 export const avgPlayerSort = (a: PlayerResultAggregate, b: PlayerResultAggregate) => {
@@ -141,7 +142,8 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
       if (isUsingPoints) {
         const prevRoundPoints = i > 0 ? allRoundsPoints[i - 1].get(result.uuid) : null
 
-        const points = getPointsForPlaceInRound(format, j, round.completions.length)
+        // Uses max completions if defined and smaller than player count, otherwise player count
+        const points = getPointsForPlaceInRound(format, j, Math.min(format.points.max || Infinity, round.players.length))
         roundPoints.set(result.uuid, {
           points,
           uuid: result.uuid,

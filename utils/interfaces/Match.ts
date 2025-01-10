@@ -54,5 +54,6 @@ export interface Format {
   points: {
     first: number
     last: number
+    max?: number
   }
 }
