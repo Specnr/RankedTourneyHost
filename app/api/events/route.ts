@@ -1,4 +1,5 @@
 import { eventExists, getEventBySecret, getEventList, upsertEvent } from "@/utils/events"
+import { parseEventFormat } from "@/utils/results";
 
 export const revalidate = 10
 
@@ -39,6 +40,13 @@ export async function POST(req: Request) {
 
   if (!res.event || !res.format) {
     return new Response("Invalid input", { status: 400 })
+  }
+
+  // Validate format
+  try {
+    parseEventFormat(res.format)
+  } catch {
+    return new Response("Event contains invalid format", { status: 400 })
   }
 
   const secret = await upsertEvent(res.event, res.format)
