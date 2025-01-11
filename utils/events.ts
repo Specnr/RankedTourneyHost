@@ -1,4 +1,6 @@
 import { MongoClient, ObjectId } from "mongodb";
+import { omitBy, isNil } from 'lodash';
+
 import randomstring from "randomstring";
 import { Match } from "./interfaces/Match";
 
@@ -10,7 +12,7 @@ export const upsertEvent = async (name: string, format: string, givenSecret?: st
   const secret = givenSecret ?? randomstring.generate()
   const res = await EventsCol.updateOne(
     { secret },
-    { $set: { name, format, lastUpdated: Date.now() } },
+    { $set: omitBy({ name, format, lastUpdated: Date.now() }, isNil) },
     { upsert: true }
   )
   return res.acknowledged ? secret : null;

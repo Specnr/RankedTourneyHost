@@ -61,7 +61,7 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   const res = await req.json()
 
-  if (!res.event || !res.format || !res.secret) {
+  if ((!res.event && !res.format) || !res.secret) {
     return new Response("Invalid input", { status: 400 })
   }
 
