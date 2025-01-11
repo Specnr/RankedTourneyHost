@@ -30,8 +30,8 @@ export interface DetailedMatch extends Match {
 }
 
 export interface PlayerPoints {
-  uuid: string,
-  points: number,
+  uuid: string
+  points: number
   sumOfPoints: number
   placement?: number
   placementsMoved?: number

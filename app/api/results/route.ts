@@ -2,6 +2,7 @@ import { getEventById } from "@/utils/events";
 import { parseEventFormat, tabulateResults } from "@/utils/results";
 import { Event } from "@/utils/interfaces/Event";
 import { ObjectId } from "mongodb";
+import { uuidToIGN } from "@/utils/ui/uuid";
 
 export const revalidate = 30
 
@@ -25,6 +26,7 @@ export async function GET(req: Request) {
   }
 
   const fullResults = await tabulateResults(event.matches || [], format, !!searchParams.get('verbose'))
+  const namedResults = await Promise.all(fullResults.results.map(async (r) => ({ ...r, nickname: await uuidToIGN(r.uuid) })))
 
-  return Response.json({ name: event.name, ...fullResults })
+  return Response.json({ name: event.name, ...fullResults, results: namedResults })
 }

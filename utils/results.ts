@@ -226,7 +226,7 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
   if (isUsingPoints) {
     const allRoundPointsArr = convertRoundPointsMapToSortedArrays(allRoundsPoints)
     return {
-      results: allRoundPointsArr[allRoundPointsArr.length - 1],
+      results: allRoundPointsArr[allRoundPointsArr.length - 1].map((pp) => ({ uuid: pp.uuid, points: pp.sumOfPoints })),
       matchData: detailedMatches,
       roundPointData: allRoundPointsArr
     }
@@ -237,7 +237,7 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
   const playerRankings = playerToPlayerData.values().toArray().toSorted(formatSort)
 
   return {
-    results: playerRankings.map((pr) => pr.uuid),
+    results: playerRankings.map((pr) => ({ uuid: pr.uuid })),
     matchData: detailedMatches
   }
 }

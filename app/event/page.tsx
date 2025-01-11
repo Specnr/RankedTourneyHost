@@ -1,9 +1,11 @@
 "use client"
 import { Spinner } from "@/components/Spinner";
+import { Container } from "@/components/Container";
 import { BaseResults } from "@/utils/interfaces/Event";
 import { getResultsFromEventId } from "@/utils/ui/requests";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react"; 
+import { SimpleResults } from "@/components/SimpleResults";
 
 export default function TargetPage() {
   const router = useRouter()
@@ -30,11 +32,16 @@ export default function TargetPage() {
     return <Spinner />;
   }
 
-  console.log(data.results)
+  console.log(data)
 
   return (
-    <div>
-      <h1>Selected Event: {eventId}</h1>
+    <div className="w-full grid grid-cols-6 gap-4">
+      <div className="col-start-2 col-span-4">
+        <Container>
+          <h1 className="text-2xl font-semibold mb-6 text-center">{ data.name }</h1>
+          <SimpleResults results={data.results} />
+        </Container>
+      </div>
     </div>
   );
 }

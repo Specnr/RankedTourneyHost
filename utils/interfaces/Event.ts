@@ -1,4 +1,4 @@
-import { DetailedMatch, Match, PlayerPoints } from "./Match";
+import { DetailedMatch, Match } from "./Match";
 
 export interface Event {
   _id: string;
@@ -8,17 +8,14 @@ export interface Event {
   matches?: Match[];
 }
 
+export interface NamedResults {
+  uuid: string;
+  nickname: string;
+  points?: number;
+}
+
 export interface BaseResults {
   name: string;
-  results: unknown[];
+  results: NamedResults[];
   matchData: DetailedMatch[];
-}
-
-export interface TimeResults extends BaseResults {
-  results: string[]
-}
-
-export interface PointResults extends BaseResults {
-  results: PlayerPoints[];
-  roundPointData?: PlayerPoints[][]
 }
