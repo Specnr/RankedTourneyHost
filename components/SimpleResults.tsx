@@ -10,7 +10,7 @@ interface Props {
 
 export const SimpleResults = ({ results }: Props) => {
   return (
-    <ol className="divide-y divide-gray-700">
+    <ol className="max-h-[75vh] overflow-y-auto divide-y divide-gray-700">
       {results.map((nr, idx) => {
         return (
           <li

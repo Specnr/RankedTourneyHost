@@ -226,7 +226,9 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
   if (isUsingPoints) {
     const allRoundPointsArr = convertRoundPointsMapToSortedArrays(allRoundsPoints)
     return {
-      results: allRoundPointsArr[allRoundPointsArr.length - 1].map((pp) => ({ uuid: pp.uuid, points: pp.sumOfPoints })),
+      results: allRoundPointsArr[allRoundPointsArr.length - 1]
+        .map((pp) => ({ uuid: pp.uuid, points: pp.sumOfPoints }))
+        .sort((a, b) => b.points - a.points),
       matchData: detailedMatches,
       roundPointData: allRoundPointsArr
     }
