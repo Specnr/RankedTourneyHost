@@ -18,7 +18,9 @@ const getClassNameForPlace = (place: number) => {
 export const SimpleResultsEntry = ({ ign, place, points }: Props) => {
   return (
     <div className="col-span-5 text-lg">
-      <span className={`${getClassNameForPlace(place)}`}>{ign}</span>
+      <span className={`${getClassNameForPlace(place)} hover:underline`}>
+        <a href={`https://mcsrranked.com/stats/${ign}`} target="_blank">{ign}</a>
+      </span>
       {
         points !== undefined && (
           <span className="font-semibold"> - {points}</span>
