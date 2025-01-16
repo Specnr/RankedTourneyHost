@@ -1,12 +1,7 @@
-export interface Result {
-  uuid: string
-  time: number
-}
-
 export interface Match {
   id: number
   date: number
-  result: Result
+  result: PlayerData
 }
 
 export enum RoleType {
@@ -26,12 +21,15 @@ export interface Player {
 
 export interface DetailedMatch extends Match {
   players: Player[]
-  completions: Result[]
+  completions: PlayerData[]
 }
 
-export interface PlayerPoints {
+export interface PlayerData {
   uuid: string
   time: number
+}
+
+export interface PlayerPoints extends PlayerData {
   points: number
   sumOfPoints: number
   placement?: number

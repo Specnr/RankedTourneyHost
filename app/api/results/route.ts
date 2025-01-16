@@ -27,6 +27,5 @@ export async function GET(req: Request) {
 
   const fullResults = await tabulateResults(event.matches || [], format, !!searchParams.get('verbose'))
   const namedResults = await Promise.all(fullResults.results.map(async (r) => ({ ...r, nickname: await uuidToIGN(r.uuid) })))
-
   return Response.json({ name: event.name, ...fullResults, results: namedResults })
 }

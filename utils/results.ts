@@ -1,4 +1,4 @@
-import { DetailedMatch, Format, Match, PlayerPoints, PlayerResultAggregate } from "./interfaces/Match";
+import { DetailedMatch, Format, Match, PlayerData, PlayerPoints, PlayerResultAggregate } from "./interfaces/Match";
 import { getMatchFromId } from "./ui/requests";
 
 export const parseEventFormat = (formatStr: string) => {
@@ -152,24 +152,42 @@ export const dropCompletionsBasedOnFormat = (playerToPlayerData: Map<string, Pla
   })
 }
 
-export const sortRoundsBasedOnFinalPoints = (playerPoints: PlayerPoints[][], resultOrder: string[]) => {
-  // Make a uuid to order map
-  const orderMap = new Map<string, number>()
-  resultOrder.forEach((uuid, idx) => orderMap.set(uuid, idx))
+export const generatePlayerRoundPointsData = (matchData: PlayerPoints[][], resultOrder: { uuid: string }[]) => {
+  const playerRoundData = new Map<string, PlayerPoints[]>()
+  matchData.forEach(round => {
+    round.forEach(pp => {
+      if (!playerRoundData.has(pp.uuid)) {
+        playerRoundData.set(pp.uuid, [])
+      }
+      const prd = playerRoundData.get(pp.uuid)!
+      prd.push(pp)
+      playerRoundData.set(pp.uuid, prd)
+    })
+  })
 
-  playerPoints.forEach(pp => pp.sort((a, b) => orderMap.get(a.uuid)! - orderMap.get(b.uuid)!))
+  const playerOrderMap = new Map<string, number>()
+  resultOrder.forEach((ro, i) => playerOrderMap.set(ro.uuid, i))
 
-  return playerPoints
+  return playerRoundData.entries().toArray().sort(([aUuid,], [bUuid,]) => playerOrderMap.get(aUuid)! - playerOrderMap.get(bUuid)!).map(([, pp]) => pp)
 }
 
-export const sortRoundsBasedOnFinalTimes = (detailedMatches: DetailedMatch[], resultOrder: string[]) => {
-  // Make a uuid to order map
-  const orderMap = new Map<string, number>()
-  resultOrder.forEach((uuid, idx) => orderMap.set(uuid, idx))
+export const generatePlayerRoundTimeData = (matchData: DetailedMatch[], resultOrder: { uuid: string }[]) => {
+  const playerRoundData = new Map<string, PlayerData[]>()
+  matchData.forEach(round => {
+    round.completions.forEach(pp => {
+      if (!playerRoundData.has(pp.uuid)) {
+        playerRoundData.set(pp.uuid, [])
+      }
+      const prd = playerRoundData.get(pp.uuid)!
+      prd.push(pp)
+      playerRoundData.set(pp.uuid, prd)
+    })
+  })
 
-  detailedMatches.forEach(dm => dm.completions.sort((a, b) => orderMap.get(a.uuid)! - orderMap.get(b.uuid)!))
+  const playerOrderMap = new Map<string, number>()
+  resultOrder.forEach((ro, i) => playerOrderMap.set(ro.uuid, i))
 
-  return detailedMatches
+  return playerRoundData.entries().toArray().sort(([aUuid,], [bUuid,]) => playerOrderMap.get(aUuid)! - playerOrderMap.get(bUuid)!).map(([, pp]) => pp)
 }
 
 export const tabulateResults = async (matches: Match[], format: Format, verbose: boolean) => {
@@ -252,7 +270,9 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
       .sort((a, b) => b.points - a.points)
     return {
       results,
-      matchData: sortRoundsBasedOnFinalPoints(allRoundPointsArr, results.map(r => r.uuid))
+      isUsingPoints,
+      matchData: allRoundPointsArr,
+      playerRoundData: generatePlayerRoundPointsData(allRoundPointsArr, results)
     }
   }
 
@@ -263,6 +283,8 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
 
   return {
     results,
-    matchData: sortRoundsBasedOnFinalTimes(detailedMatches, results.map(r => r.uuid)).map(dm => dm.completions)
+    isUsingPoints,
+    matchData: detailedMatches.map(dm => dm.completions),
+    playerRoundData: generatePlayerRoundTimeData(detailedMatches, results)
   }
 }
