@@ -1,4 +1,4 @@
-import { DetailedMatch, Match } from "./Match";
+import { DetailedMatch, Match, PlayerPoints } from "./Match";
 
 export interface Event {
   _id: string;
@@ -18,4 +18,11 @@ export interface BaseResults {
   name: string;
   results: NamedResults[];
   matchData: DetailedMatch[];
+  roundPointData?: PlayerPoints[][];
+}
+
+export enum PageType {
+  Simple = 1,
+  Detailed = 2,
+  PerRound = 3,
 }

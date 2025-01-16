@@ -1,4 +1,3 @@
-// import { PlayerPoints } from "@/utils/interfaces/Match"
 import { uuidToHead } from "@/utils/ui/uuid"
 import Image from "next/image";
 import { SimpleResultsEntry } from "./SimpleResultsEntry";
