@@ -31,6 +31,7 @@ export interface DetailedMatch extends Match {
 
 export interface PlayerPoints {
   uuid: string
+  time: number
   points: number
   sumOfPoints: number
   placement?: number

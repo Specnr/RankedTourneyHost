@@ -203,6 +203,7 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
         // Uses max completions if defined and smaller than player count, otherwise player count
         const points = getPointsForPlaceInRound(format, j, Math.min(format.points.max || Infinity, round.players.length))
         roundPoints.set(result.uuid, {
+          time: result.time,
           points,
           uuid: result.uuid,
           sumOfPoints: (prevRoundPoints?.sumOfPoints || 0) + points,
@@ -226,6 +227,7 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
           const prevRoundPoints = i > 0 ? allRoundsPoints[i - 1].get(uuid) : null
 
           roundPoints.set(uuid, {
+            time: -1,
             points: 0,
             uuid: uuid,
             sumOfPoints: prevRoundPoints?.sumOfPoints || 0,
