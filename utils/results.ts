@@ -152,6 +152,26 @@ export const dropCompletionsBasedOnFormat = (playerToPlayerData: Map<string, Pla
   })
 }
 
+export const sortRoundsBasedOnFinalPoints = (playerPoints: PlayerPoints[][], resultOrder: string[]) => {
+  // Make a uuid to order map
+  const orderMap = new Map<string, number>()
+  resultOrder.forEach((uuid, idx) => orderMap.set(uuid, idx))
+
+  playerPoints.forEach(pp => pp.sort((a, b) => orderMap.get(a.uuid)! - orderMap.get(b.uuid)!))
+
+  return playerPoints
+}
+
+export const sortRoundsBasedOnFinalTimes = (detailedMatches: DetailedMatch[], resultOrder: string[]) => {
+  // Make a uuid to order map
+  const orderMap = new Map<string, number>()
+  resultOrder.forEach((uuid, idx) => orderMap.set(uuid, idx))
+
+  detailedMatches.forEach(dm => dm.completions.sort((a, b) => orderMap.get(a.uuid)! - orderMap.get(b.uuid)!))
+
+  return detailedMatches
+}
+
 export const tabulateResults = async (matches: Match[], format: Format, verbose: boolean) => {
   const detailedMatches = await getDetailedMatches(matches, verbose)
   const playerToPlayerData = new Map<string, PlayerResultAggregate>()
@@ -225,21 +245,22 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
 
   if (isUsingPoints) {
     const allRoundPointsArr = convertRoundPointsMapToSortedArrays(allRoundsPoints)
+    const results = allRoundPointsArr[allRoundPointsArr.length - 1]
+      .map((pp) => ({ uuid: pp.uuid, points: pp.sumOfPoints }))
+      .sort((a, b) => b.points - a.points)
     return {
-      results: allRoundPointsArr[allRoundPointsArr.length - 1]
-        .map((pp) => ({ uuid: pp.uuid, points: pp.sumOfPoints }))
-        .sort((a, b) => b.points - a.points),
-      matchData: detailedMatches,
-      roundPointData: allRoundPointsArr
+      results,
+      matchData: sortRoundsBasedOnFinalPoints(allRoundPointsArr, results.map(r => r.uuid))
     }
   }
 
   // Select sort based on format
   const formatSort = format.avg ? avgPlayerSort : defaultPlayerSort;
   const playerRankings = playerToPlayerData.values().toArray().toSorted(formatSort)
+  const results = playerRankings.map((pr) => ({ uuid: pr.uuid }))
 
   return {
-    results: playerRankings.map((pr) => ({ uuid: pr.uuid })),
-    matchData: detailedMatches
+    results,
+    matchData: sortRoundsBasedOnFinalTimes(detailedMatches, results.map(r => r.uuid)).map(dm => dm.completions)
   }
 }
