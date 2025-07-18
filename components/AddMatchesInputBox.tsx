@@ -1,28 +1,28 @@
-import { useState } from "react"
-
-import { Container } from "@/components/Container"
+import { useState } from "react";
 import { getMatchesFromIGN } from "@/utils/ui/requests";
 import { MatchEntry } from "./MatchEntry";
-import { Match } from "@/utils/interfaces/Match"
+import { Match } from "@/utils/interfaces/Match";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface Props {
-  selectedMatches: Match[]
-  addMatch: (match: Match) => void
+  selectedMatches: Match[];
+  addMatch: (match: Match) => void;
 }
 
 export const AddMatchesInputBox = ({ selectedMatches, addMatch }: Props) => {
-  const [ign, setIgn] = useState("")
+  const [ign, setIgn] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [matches, setMatches] = useState<Match[]>([])
+  const [matches, setMatches] = useState<Match[]>([]);
 
   const softUpdate = () => {
-    const matchIds = new Set(selectedMatches.map((m) => m.id))
+    const matchIds = new Set(selectedMatches.map((m) => m.id));
     const filteredMatches: Match[] = matches.filter(
       (item: Match) => !matchIds.has(item.id)
-    )
+    );
 
-    setMatches(filteredMatches)
-  }
+    setMatches(filteredMatches);
+  };
 
   const handleUpdate = async () => {
     if (!ign) {
@@ -32,57 +32,43 @@ export const AddMatchesInputBox = ({ selectedMatches, addMatch }: Props) => {
 
     setErrorMessage(""); // Clear any previous error
 
-    const fetchedMatches = await getMatchesFromIGN(ign)
+    const fetchedMatches = await getMatchesFromIGN(ign);
     if (!fetchedMatches || !Array.isArray(fetchedMatches)) {
       setErrorMessage("Request failed, try again later");
       return;
     }
 
-    const matchIds = new Set(selectedMatches.map((m) => m.id))
+    const matchIds = new Set(selectedMatches.map((m) => m.id));
     const filteredMatches: Match[] = fetchedMatches.filter(
       (item: Match) => !matchIds.has(item.id) && !!item.result.uuid
-    )
+    );
 
-    setMatches(filteredMatches)
-  }
+    setMatches(filteredMatches);
+  };
 
   return (
-    <Container>
-      <h1 className="text-xl font-semibold mb-6 text-center">Add Matches</h1>
-      <div className="mb-4">
-        <label htmlFor="eventSecret" className="block text-sm font-medium mb-2">
-          Private Room Host IGN
-        </label>
-        <input
-          type="text"
-          id="eventSecret"
-          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter IGN"
-          value={ign}
-          onChange={(e) => setIgn(e.target.value)}
-        />
-      </div>
-
-      {errorMessage && (
-        <div className="text-red-500 text-center mb-4">
-          <p>{errorMessage}</p>
-        </div>
-      )}
-
-      <button
-        onClick={handleUpdate}
-        className="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        Update
-      </button>
+    <div className="flex flex-col gap-4">
+      <Input
+        type="text"
+        placeholder="Enter IGN"
+        value={ign}
+        onChange={(e) => setIgn(e.target.value)}
+      />
+      <Button onClick={handleUpdate}>Update</Button>
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       <div className="max-h-[500px] overflow-y-auto">
         {matches.map((match, idx) => (
-          <MatchEntry isAdding match={match} key={idx} handleMatchChange={() => {
-            addMatch(match)
-            softUpdate()  // Update the UI without repinging the backend
-          }} />
+          <MatchEntry
+            isAdding
+            match={match}
+            key={idx}
+            handleMatchChange={() => {
+              addMatch(match);
+              softUpdate(); // Update the UI without repinging the backend
+            }}
+          />
         ))}
       </div>
-    </Container>
-  )
-}
+    </div>
+  );
+};

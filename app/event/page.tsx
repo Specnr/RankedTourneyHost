@@ -1,6 +1,6 @@
 "use client"
 import { Spinner } from "@/components/Spinner";
-import { Container } from "@/components/Container";
+
 import { BaseResults, PageType } from "@/utils/interfaces/Event";
 import { getResultsFromEventId } from "@/utils/ui/requests";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -38,9 +38,9 @@ export default function TargetPage() {
   return (
     <div className="w-full grid grid-cols-6 gap-4">
       <div className="col-span-6 md:col-start-2 md:col-span-4">
-        <Container>
-          <h1 className="text-2xl md:text-3xl font-semibold text-center">{data.name}</h1>
-          <div className="invisible h-0 md:h-fit md:visible md:my-4 text-xl grid grid-cols-3 divide-x divide-gray-700 text-center">
+        
+          <h1 className="text-2xl md:text-3xl font-semibold text-center py-4">{data.name}</h1>
+          <div className="visible h-fit my-2 md:my-4 text-base md:text-xl grid grid-cols-3 divide-x divide-gray-700 text-center">
             <span onClick={() => setPageType(PageType.Simple)}
               className={`hover:font-bold ${pageType === PageType.Simple ? "font-bold" : null}`}>
               Simple
@@ -69,7 +69,7 @@ export default function TargetPage() {
               />
             )
           }
-        </Container>
+        
       </div>
     </div>
   );

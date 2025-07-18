@@ -3,6 +3,9 @@ import { msToTime } from "@/utils/ui/timing";
 import { uuidToHead } from "@/utils/ui/uuid";
 import Image from "next/image";
 import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Props {
   playerRoundData: PlayerData[][] | PlayerPoints[][];
@@ -23,32 +26,32 @@ export const PerRoundResults = ({ playerRoundData, isUsingPoints, uuidToNameMap 
   );
 
   return (
-    <div className="max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-lg p-6 max-h-[75vh] overflow-y-auto">
-      <div className="flex justify-center mb-4">
-        <label htmlFor="round-selector" className="mr-2 text-gray-300 font-medium">Select Round:</label>
-        <select
-          id="round-selector"
-          className="bg-gray-700 text-gray-200 px-3 py-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          value={selectedRound}
-          onChange={e => setSelectedRound(Number(e.target.value))}
-        >
-          {rounds.map((_, idx) => (
-            <option key={idx} value={idx}>Round {idx + 1}</option>
-          ))}
-        </select>
-      </div>
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-center mb-2 text-gray-200">Round {selectedRound + 1}</h2>
-        <table className="min-w-full table-auto border-collapse border border-gray-700 text-center mb-4">
-          <thead className="bg-gray-700">
-            <tr>
-              <th className="py-2 px-4 text-sm font-semibold text-gray-300">Player</th>
-              <th className="py-2 px-4 text-sm font-semibold text-gray-300">Name</th>
-              <th className="py-2 px-4 text-sm font-semibold text-gray-300">Result</th>
-              {isUsingPoints && <th className="py-2 px-4 text-sm font-semibold text-gray-300">Points</th>}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-700">
+    <Card>
+
+      <CardContent className="p-4">
+        <div className="flex justify-center mb-4">
+          <Select onValueChange={(value) => setSelectedRound(Number(value))}>
+            <SelectTrigger className="w-[180px] bg-secondary border-secondary">
+              <SelectValue className="text-white" placeholder={`Round ${selectedRound + 1}`} />
+            </SelectTrigger>
+            <SelectContent>
+              {rounds.map((_, idx) => (
+                <SelectItem key={idx} value={idx.toString()}>Round {idx + 1}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-lg w-1/12 hidden sm:table-cell">Player</TableHead>
+              <TableHead className="text-lg">Name</TableHead>
+              <TableHead className="text-lg">Result</TableHead>
+              {isUsingPoints && <TableHead className="text-lg">Points</TableHead>}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {rounds[selectedRound]
               .slice() // avoid mutating original data
               // Filter out players with 0 points if using points
@@ -62,41 +65,53 @@ export const PerRoundResults = ({ playerRoundData, isUsingPoints, uuidToNameMap 
                 if (bTime === -1) return -1;
                 return aTime - bTime;
               })
-              .map((pd) => (
-                <tr key={pd.uuid} className="hover:bg-gray-700 transition">
-                  <td>
-                    <Image
-                      className="mx-auto"
-                      alt="avatar"
-                      src={uuidToHead(pd.uuid)}
-                      width={20}
-                      height={20}
-                      unoptimized
-                    />
-                  </td>
-                  <td className="py-3 px-4 text-gray-200 font-medium">
-                    {uuidToNameMap[pd.uuid] || pd.uuid}
-                  </td>
-                  <td className="py-3 px-4 text-blue-400 font-medium">
-                    {isUsingPoints
-                      ? (pd as PlayerPoints).time === -1
-                        ? "DNF"
-                        : msToTime((pd as PlayerPoints).time)
-                      : (pd as PlayerData).time === -1
-                        ? "DNF"
-                        : msToTime((pd as PlayerData).time)
-                    }
-                  </td>
-                  {isUsingPoints && (
-                    <td className="py-3 px-4 text-sm font-semibold text-gray-300">
-                      {(pd as PlayerPoints).points}
-                    </td>
-                  )}
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+              .map((pd, idx) => {
+                const isTop3 = idx < 3;
+                const textColorClass = isTop3
+                  ? idx === 0
+                    ? "text-gold"
+                    : idx === 1
+                      ? "text-silver"
+                      : "text-bronze"
+                  : "";
+                const fontWeightClass = isTop3 ? "font-bold" : "";
+
+                return (
+                  <TableRow key={pd.uuid} className={`${textColorClass} ${fontWeightClass}`}>
+                    <TableCell className="w-1/12 hidden sm:table-cell">
+                      <Image
+                        className="mx-auto hidden sm:inline-block"
+                        alt="avatar"
+                        src={uuidToHead(pd.uuid)}
+                        width={24}
+                        height={24}
+                        unoptimized
+                      />
+                    </TableCell>
+                    <TableCell className="text-base">
+                      {uuidToNameMap[pd.uuid] || pd.uuid}
+                    </TableCell>
+                    <TableCell className="text-base">
+                      {isUsingPoints
+                        ? (pd as PlayerPoints).time === -1
+                          ? "DNF"
+                          : msToTime((pd as PlayerPoints).time)
+                        : (pd as PlayerData).time === -1
+                          ? "DNF"
+                          : msToTime((pd as PlayerData).time)
+                      }
+                    </TableCell>
+                    {isUsingPoints && (
+                      <TableCell className="text-base">
+                        {(pd as PlayerPoints).points}
+                      </TableCell>
+                    )}
+                  </TableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
-}; 
+};

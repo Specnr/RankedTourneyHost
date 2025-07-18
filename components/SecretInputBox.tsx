@@ -1,14 +1,13 @@
 import { useState } from "react";
-
-import { Container } from "@/components/Container";
-
 import { getEventWithSecret } from "@/utils/ui/requests";
 import { Event } from "@/utils/interfaces/Event";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface Props {
-  event: Event | null
+  event: Event | null;
   setEvent: (event: Event | null) => void;
-  eventSecret: string
+  eventSecret: string;
   setEventSecret: (secret: string) => void;
 }
 
@@ -32,44 +31,24 @@ export const SecretInputBox = ({ event, setEvent, eventSecret, setEventSecret }:
       setEvent(fetchedEvent);
     }
   };
-  
+
   return (
-    <Container>
-      <h1 className="text-2xl font-semibold mb-6 text-center">RTH Admin Portal</h1>
-      <div className="mb-4">
-        <label htmlFor="eventSecret" className="block text-sm font-medium mb-2">
-          Event Secret
-        </label>
-        <input
-          type="text"
-          id="eventSecret"
-          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter your event secret"
-          value={eventSecret}
-          onChange={(e) => setEventSecret(e.target.value)}
-        />
-      </div>
-
-      {errorMessage && (
-        <div className="text-red-500 text-center mb-4">
-          <p>{errorMessage}</p>
-        </div>
-      )}
-
-      <button
-        onClick={handleSubmit}
-        className="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        Submit
-      </button>
-
+    <div className="flex flex-col gap-4">
+      <Input
+        type="text"
+        placeholder="Enter your event secret"
+        value={eventSecret}
+        onChange={(e) => setEventSecret(e.target.value)}
+      />
+      <Button onClick={handleSubmit}>Submit</Button>
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       {event && (
-        <div className="mt-6 text-center text-white">
-          <h2 className="text-xl">Event Details</h2>
+        <div className="mt-4">
+          <h2 className="text-xl font-bold">Event Details</h2>
           <p><strong>Event Name:</strong> {event.name}</p>
           <p><strong>Event Format:</strong> {event.format}</p>
         </div>
       )}
-    </Container>
-  )
-}
+    </div>
+  );
+};

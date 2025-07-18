@@ -1,14 +1,19 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function NavBar() {
   return (
-    <div className="text-xl divide-x divide-gray-700 grid grid-cols-2 gap-4 justify-center">
-      <Link className="pl-4" href="/">
-        Home
-      </Link>
-      <Link className="pl-4" href="/admin">
-        Admin
-      </Link>
-    </div>
+    <header className="flex items-center justify-between p-4 border-b sticky top-0 z-20 bg-background">
+      <div className="flex items-center gap-4">
+        <Link href="/">
+          <h1 className="text-2xl font-bold">Ranked Tourney Host</h1>
+        </Link>
+      </div>
+      <div className="flex items-center gap-4">
+        <Link href="/admin">
+          <Button variant="ghost">Admin</Button>
+        </Link>
+      </div>
+    </header>
   );
 }

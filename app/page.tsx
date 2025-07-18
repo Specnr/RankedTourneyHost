@@ -1,20 +1,18 @@
-import { Container } from "@/components/Container"
-import { Selection } from "@/components/Selection"
-import { getEventList } from "@/utils/ui/requests"
+
+import { getEventList } from "@/utils/ui/requests";
+import { EventSelector } from "@/components/EventSelector";
 
 const Page = async () => {
-  const events = await getEventList()
+  const events = await getEventList();
 
   return (
-    <div className="w-full grid grid-cols-6 gap-4">
-      <div className="col-start-2 col-span-4">
-        <Container>
-          <h1 className="text-2xl font-semibold mb-6 text-center">Ranked Tourney Host</h1>
-          <Selection items={events} />
-        </Container>
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div className="flex flex-col items-center gap-4">
+        <h1 className="text-5xl font-bold">Select an Event</h1>
+        <EventSelector events={events} />
       </div>
     </div>
-  )
+  );
 }
 
-export default Page
+export default Page;
