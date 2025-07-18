@@ -7,6 +7,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SimpleResults } from "@/components/Results/SimpleResults";
 import { DetailedResults } from "@/components/Results/DetailedResults";
+import { PerRoundResults } from "@/components/Results/PerRoundResults";
 
 export default function TargetPage() {
   const router = useRouter()
@@ -58,6 +59,9 @@ export default function TargetPage() {
           }
           {
             pageType === PageType.Detailed && <DetailedResults playerRoundData={data.playerRoundData} isUsingPoints={data.isUsingPoints} />
+          }
+          {
+            pageType === PageType.PerRound && <PerRoundResults playerRoundData={data.playerRoundData} isUsingPoints={data.isUsingPoints} />
           }
         </Container>
       </div>
