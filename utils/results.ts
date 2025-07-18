@@ -218,13 +218,8 @@ export const tabulateResults = async (matches: Match[], format: Format, verbose:
       if (isUsingPoints) {
         const prevRoundPoints = i > 0 ? allRoundsPoints[i - 1].get(result.uuid) : null
 
-        // ** HACKY **
-        // if the last completion has 0ms, then assume the match was ended by completion count, otherwise by time limit
-        const playerCount = round.completions[round.completions.length - 1].time % 1000 === 0
-          ? round.completions.length : round.players.length
-
         // Uses max completions if defined and smaller than player count, otherwise player count
-        const points = getPointsForPlaceInRound(format, j, Math.min(format.points.max || Infinity, playerCount))
+        const points = getPointsForPlaceInRound(format, j, Math.min(format.points.max || Infinity, round.players.length))
         roundPoints.set(result.uuid, {
           time: result.time,
           points,
