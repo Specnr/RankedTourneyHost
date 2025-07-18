@@ -61,7 +61,13 @@ export default function TargetPage() {
             pageType === PageType.Detailed && <DetailedResults playerRoundData={data.playerRoundData} isUsingPoints={data.isUsingPoints} />
           }
           {
-            pageType === PageType.PerRound && <PerRoundResults playerRoundData={data.playerRoundData} isUsingPoints={data.isUsingPoints} />
+            pageType === PageType.PerRound && (
+              <PerRoundResults
+                playerRoundData={data.playerRoundData}
+                isUsingPoints={data.isUsingPoints}
+                uuidToNameMap={Object.fromEntries(data.results.map(r => [r.uuid, r.nickname]))}
+              />
+            )
           }
         </Container>
       </div>

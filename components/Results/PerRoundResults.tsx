@@ -7,9 +7,10 @@ import { useState } from "react";
 interface Props {
   playerRoundData: PlayerData[][] | PlayerPoints[][];
   isUsingPoints: boolean;
+  uuidToNameMap: { [uuid: string]: string };
 }
 
-export const PerRoundResults = ({ playerRoundData, isUsingPoints }: Props) => {
+export const PerRoundResults = ({ playerRoundData, isUsingPoints, uuidToNameMap }: Props) => {
   const [selectedRound, setSelectedRound] = useState(0);
   if (!playerRoundData || playerRoundData.length === 0 || playerRoundData[0].length === 0) {
     return <div className="text-center text-gray-400">No per-round data available.</div>;
@@ -18,9 +19,8 @@ export const PerRoundResults = ({ playerRoundData, isUsingPoints }: Props) => {
   // Transpose playerRoundData to get rounds as first dimension
   const numRounds = playerRoundData[0].length;
   const rounds: (PlayerData[] | PlayerPoints[])[] = Array.from({ length: numRounds }, (_, roundIdx) =>
-    playerRoundData.map(playerArr => playerArr[roundIdx])
+    playerRoundData.map(playerArr => playerArr[roundIdx]).filter(x => x)
   );
-
 
   return (
     <div className="max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-lg p-6 max-h-[75vh] overflow-y-auto">
@@ -43,6 +43,7 @@ export const PerRoundResults = ({ playerRoundData, isUsingPoints }: Props) => {
           <thead className="bg-gray-700">
             <tr>
               <th className="py-2 px-4 text-sm font-semibold text-gray-300">Player</th>
+              <th className="py-2 px-4 text-sm font-semibold text-gray-300">Name</th>
               <th className="py-2 px-4 text-sm font-semibold text-gray-300">Result</th>
               {isUsingPoints && <th className="py-2 px-4 text-sm font-semibold text-gray-300">Points</th>}
             </tr>
@@ -50,6 +51,8 @@ export const PerRoundResults = ({ playerRoundData, isUsingPoints }: Props) => {
           <tbody className="divide-y divide-gray-700">
             {rounds[selectedRound]
               .slice() // avoid mutating original data
+              // Filter out players with 0 points if using points
+              .filter(pd => !isUsingPoints || (pd as PlayerPoints).points > 0)
               .sort((a, b) => {
                 const aTime = isUsingPoints ? (a as PlayerPoints).time : (a as PlayerData).time;
                 const bTime = isUsingPoints ? (b as PlayerPoints).time : (b as PlayerData).time;
@@ -70,6 +73,9 @@ export const PerRoundResults = ({ playerRoundData, isUsingPoints }: Props) => {
                       height={20}
                       unoptimized
                     />
+                  </td>
+                  <td className="py-3 px-4 text-gray-200 font-medium">
+                    {uuidToNameMap[pd.uuid] || pd.uuid}
                   </td>
                   <td className="py-3 px-4 text-blue-400 font-medium">
                     {isUsingPoints

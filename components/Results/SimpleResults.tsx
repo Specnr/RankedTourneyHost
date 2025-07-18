@@ -8,9 +8,11 @@ interface Props {
 }
 
 export const SimpleResults = ({ results }: Props) => {
+  // Filter out people with no points
+  const filteredResults = results.filter(nr => nr.points && nr.points > 0);
   return (
     <ol className="max-h-[70vh] overflow-y-auto divide-y divide-gray-700">
-      {results.map((nr, idx) => {
+      {filteredResults.map((nr, idx) => {
         return (
           <li
             key={idx}
@@ -28,7 +30,7 @@ export const SimpleResults = ({ results }: Props) => {
             </div>
             <SimpleResultsEntry ign={nr.nickname} place={idx + 1} points={nr.points} />
           </li>
-      )
+        )
       })}
     </ol>
   )
