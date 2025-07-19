@@ -44,7 +44,7 @@ export const getEventList = async () => {
   const data = await sendSafeRequest(`${process.env.HOST}/api/events`)
 
   if (!data || !data.events || !Array.isArray(data.events) || data.events.length === 0) {
-    return false
+    return []
   }
 
   return data.events
