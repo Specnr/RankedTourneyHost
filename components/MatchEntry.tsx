@@ -3,7 +3,6 @@ import Image from "next/image";
 import { Match } from "@/utils/interfaces/Match";
 import { uuidToHead, uuidToIGN } from "@/utils/ui/uuid";
 import { msToTime } from "@/utils/ui/timing";
-import { Spinner } from "./Spinner";
 import { Minus, Plus } from "./SVGs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,10 +27,6 @@ export const MatchEntry = ({ match, handleMatchChange, isAdding }: Props) => {
     fetchData();
   }, [match.result.uuid]);
 
-  if (loading) {
-    return <Spinner />;
-  }
-
   return (
     <Card className="mt-4">
       <CardContent className="p-4">
@@ -40,21 +35,28 @@ export const MatchEntry = ({ match, handleMatchChange, isAdding }: Props) => {
             <p className="font-bold">{match.id}</p>
             <p>{new Date(match.date * 1000).toLocaleString()}</p>
             <div className="inline-flex items-center space-x-2">
-              {ign && (
-                <>
-                  {match.result.uuid && (
-                    <Image
-                      alt="avatar"
-                      src={uuidToHead(match.result.uuid)}
-                      width={20}
-                      height={20}
-                      unoptimized
-                    />
-                  )}
-                  <span>
-                    {ign} - {msToTime(match.result.time)}
-                  </span>
-                </>
+              {loading ? (
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+                  <span className="text-gray-500">Loading...</span>
+                </div>
+              ) : (
+                ign && (
+                  <>
+                    {match.result.uuid && (
+                      <Image
+                        alt="avatar"
+                        src={uuidToHead(match.result.uuid)}
+                        width={20}
+                        height={20}
+                        unoptimized
+                      />
+                    )}
+                    <span>
+                      {ign} - {msToTime(match.result.time)}
+                    </span>
+                  </>
+                )
               )}
             </div>
           </div>

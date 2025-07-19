@@ -69,6 +69,15 @@ export async function PUT(req: Request) {
     return new Response("Event not found", { status: 404 })
   }
 
+  // Validate format if it's being updated
+  if (res.format) {
+    try {
+      parseEventFormat(res.format)
+    } catch {
+      return new Response("Event contains invalid format", { status: 400 })
+    }
+  }
+
   const secret = await upsertEvent(res.event, res.format, res.secret)
   if (secret == null) {
     return new Response("Failed to update event", { status: 400 })

@@ -46,5 +46,4 @@ The match list is built on the RTH website's admin portal. Here you enter your t
 This can be done as soon as each round is completed, so I would reccomend to give this job to the lobby host for they tournament.
 
 ### TODO:
-- Allow editing the format in the admin portal
 - Cache tourney results more, unless we are then pog (i forget)

@@ -14,6 +14,7 @@ export const AddMatchesInputBox = ({ selectedMatches, addMatch }: Props) => {
   const [ign, setIgn] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [matches, setMatches] = useState<Match[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const softUpdate = () => {
     const matchIds = new Set(selectedMatches.map((m) => m.id));
@@ -31,19 +32,24 @@ export const AddMatchesInputBox = ({ selectedMatches, addMatch }: Props) => {
     }
 
     setErrorMessage(""); // Clear any previous error
+    setIsLoading(true);
 
-    const fetchedMatches = await getMatchesFromIGN(ign);
-    if (!fetchedMatches || !Array.isArray(fetchedMatches)) {
-      setErrorMessage("Request failed, try again later");
-      return;
+    try {
+      const fetchedMatches = await getMatchesFromIGN(ign);
+      if (!fetchedMatches || !Array.isArray(fetchedMatches)) {
+        setErrorMessage("Request failed, try again later");
+        return;
+      }
+
+      const matchIds = new Set(selectedMatches.map((m) => m.id));
+      const filteredMatches: Match[] = fetchedMatches.filter(
+        (item: Match) => !matchIds.has(item.id) && !!item.result.uuid
+      );
+
+      setMatches(filteredMatches);
+    } finally {
+      setIsLoading(false);
     }
-
-    const matchIds = new Set(selectedMatches.map((m) => m.id));
-    const filteredMatches: Match[] = fetchedMatches.filter(
-      (item: Match) => !matchIds.has(item.id) && !!item.result.uuid
-    );
-
-    setMatches(filteredMatches);
   };
 
   return (
@@ -54,7 +60,9 @@ export const AddMatchesInputBox = ({ selectedMatches, addMatch }: Props) => {
         value={ign}
         onChange={(e) => setIgn(e.target.value)}
       />
-      <Button onClick={handleUpdate}>Update</Button>
+      <Button onClick={handleUpdate} disabled={isLoading}>
+        {isLoading ? "Loading..." : "Update"}
+      </Button>
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       <div className="max-h-[500px] overflow-y-auto">
         {matches.map((match, idx) => (
