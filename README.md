@@ -47,3 +47,4 @@ This can be done as soon as each round is completed, so I would reccomend to giv
 
 ### TODO:
 - Cache tourney results more, unless we are then pog (i forget)
+- Make simple view not super weird for avg events
