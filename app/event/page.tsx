@@ -55,20 +55,20 @@ function EventPageContent() {
           </span>
         </div>
         {
-            pageType === PageType.Simple && <SimpleResults results={data.results} />
-          }
-          {
-            pageType === PageType.Detailed && <DetailedResults playerRoundData={data.playerRoundData} isUsingPoints={data.isUsingPoints} />
-          }
-          {
-            pageType === PageType.PerRound && (
-              <PerRoundResults
-                playerRoundData={data.playerRoundData}
-                isUsingPoints={data.isUsingPoints}
-                uuidToNameMap={Object.fromEntries(data.results.map(r => [r.uuid, r.nickname]))}
-              />
-            )
-          }
+          pageType === PageType.Simple && <SimpleResults results={data.results} isUsingPoints={data.isUsingPoints} />
+        }
+        {
+          pageType === PageType.Detailed && <DetailedResults playerRoundData={data.playerRoundData} isUsingPoints={data.isUsingPoints} />
+        }
+        {
+          pageType === PageType.PerRound && (
+            <PerRoundResults
+              playerRoundData={data.playerRoundData}
+              isUsingPoints={data.isUsingPoints}
+              uuidToNameMap={Object.fromEntries(data.results.map(r => [r.uuid, r.nickname]))}
+            />
+          )
+        }
       </div>
     </div>
   );

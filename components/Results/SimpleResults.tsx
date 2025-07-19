@@ -6,10 +6,11 @@ import { uuidToHead } from "@/utils/ui/uuid";
 
 interface Props {
   results: NamedResults[];
+  isUsingPoints: boolean;
 }
 
-export const SimpleResults = ({ results }: Props) => {
-  const filteredResults = results.filter((nr) => nr.points && nr.points > 0);
+export const SimpleResults = ({ results, isUsingPoints }: Props) => {
+  const filteredResults = results.filter((nr) => nr.points ? nr.points! > 0 : true);
 
   return (
     <Card className="rounded-b-md">
@@ -22,7 +23,7 @@ export const SimpleResults = ({ results }: Props) => {
                 <TableHead className="text-lg w-1/12">#</TableHead>
                 <TableHead className="text-lg w-1/12 hidden sm:table-cell">Player</TableHead>
                 <TableHead className="text-lg">IGN</TableHead>
-                <TableHead className="text-lg">Points</TableHead>
+                {isUsingPoints && <TableHead className="text-lg">Points</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -51,7 +52,7 @@ export const SimpleResults = ({ results }: Props) => {
                       />
                     </TableCell>
                     <TableCell className="text-base">{nr.nickname}</TableCell>
-                    <TableCell className="text-base">{nr.points}</TableCell>
+                    {isUsingPoints && <TableCell className="text-base">{nr.points}</TableCell>}
                   </TableRow>
                 );
               })}
