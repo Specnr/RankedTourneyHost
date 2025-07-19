@@ -16,45 +16,47 @@ export const DetailedResults = ({ playerRoundData, isUsingPoints }: Props) => {
   }
 
   return (
-    <Card>
+    <Card className="rounded-b-md">
 
       <CardContent className="p-4">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-lg">Player</TableHead>
-              {
-                playerRoundData[0].map((_, i) => <TableHead key={i} className="text-lg">R{i + 1}</TableHead>)
-              }
-              {isUsingPoints && <TableHead className="text-lg">Total</TableHead>}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {playerRoundData.map((prs) => {
+        <div className="max-h-[calc(100vh-300px)] md:max-h-[calc(100vh-400px)] overflow-y-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-lg">Player</TableHead>
+                {
+                  playerRoundData[0].map((_, i) => <TableHead key={i} className="text-lg">R{i + 1}</TableHead>)
+                }
+                {isUsingPoints && <TableHead className="text-lg">Total</TableHead>}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {playerRoundData.map((prs) => {
 
-              return (
-                <TableRow key={prs[0].uuid}>
-                  <TableCell>
-                    <Image
-                      className="mx-auto"
-                      alt="avatar"
-                      src={uuidToHead(prs[0].uuid)}
-                      width={24}
-                      height={24}
-                      unoptimized
-                    />
-                  </TableCell>
-                  {
-                    prs.map((pp, j) => (
-                      <TableCell key={j} className="text-base">{isUsingPoints ? (pp as PlayerPoints).points : (pp.time === -1 ? "DNF" : msToTime(pp.time))}</TableCell>
-                    ))
-                  }
-                  {isUsingPoints && <TableCell className="text-base font-bold">{(prs[prs.length - 1] as PlayerPoints).sumOfPoints}</TableCell>}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                return (
+                  <TableRow key={prs[0].uuid}>
+                    <TableCell>
+                      <Image
+                        className="mx-auto"
+                        alt="avatar"
+                        src={uuidToHead(prs[0].uuid)}
+                        width={24}
+                        height={24}
+                        unoptimized
+                      />
+                    </TableCell>
+                    {
+                      prs.map((pp, j) => (
+                        <TableCell key={j} className="text-base">{isUsingPoints ? (pp as PlayerPoints).points : (pp.time === -1 ? "DNF" : msToTime(pp.time))}</TableCell>
+                      ))
+                    }
+                    {isUsingPoints && <TableCell className="text-base font-bold">{(prs[prs.length - 1] as PlayerPoints).sumOfPoints}</TableCell>}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   )

@@ -26,7 +26,7 @@ export const PerRoundResults = ({ playerRoundData, isUsingPoints, uuidToNameMap 
   );
 
   return (
-    <Card>
+    <Card className="rounded-b-md">
 
       <CardContent className="p-4">
         <div className="flex justify-center mb-4">
@@ -41,76 +41,77 @@ export const PerRoundResults = ({ playerRoundData, isUsingPoints, uuidToNameMap 
             </SelectContent>
           </Select>
         </div>
+        <div className="max-h-[calc(100vh-300px)] md:max-h-[calc(100vh-400px)] overflow-y-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-lg w-1/12 hidden sm:table-cell">Player</TableHead>
+                <TableHead className="text-lg">Name</TableHead>
+                <TableHead className="text-lg">Result</TableHead>
+                {isUsingPoints && <TableHead className="text-lg">Points</TableHead>}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rounds[selectedRound]
+                .slice() // avoid mutating original data
+                // Filter out players with 0 points if using points
+                .filter(pd => !isUsingPoints || (pd as PlayerPoints).points > 0)
+                .sort((a, b) => {
+                  const aTime = isUsingPoints ? (a as PlayerPoints).time : (a as PlayerData).time;
+                  const bTime = isUsingPoints ? (b as PlayerPoints).time : (b as PlayerData).time;
+                  // DNF (time === -1) should be sorted last
+                  if (aTime === -1 && bTime === -1) return 0;
+                  if (aTime === -1) return 1;
+                  if (bTime === -1) return -1;
+                  return aTime - bTime;
+                })
+                .map((pd, idx) => {
+                  const isTop3 = idx < 3;
+                  const textColorClass = isTop3
+                    ? idx === 0
+                      ? "text-gold"
+                      : idx === 1
+                        ? "text-silver"
+                        : "text-bronze"
+                    : "";
+                  const fontWeightClass = isTop3 ? "font-bold" : "";
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-lg w-1/12 hidden sm:table-cell">Player</TableHead>
-              <TableHead className="text-lg">Name</TableHead>
-              <TableHead className="text-lg">Result</TableHead>
-              {isUsingPoints && <TableHead className="text-lg">Points</TableHead>}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rounds[selectedRound]
-              .slice() // avoid mutating original data
-              // Filter out players with 0 points if using points
-              .filter(pd => !isUsingPoints || (pd as PlayerPoints).points > 0)
-              .sort((a, b) => {
-                const aTime = isUsingPoints ? (a as PlayerPoints).time : (a as PlayerData).time;
-                const bTime = isUsingPoints ? (b as PlayerPoints).time : (b as PlayerData).time;
-                // DNF (time === -1) should be sorted last
-                if (aTime === -1 && bTime === -1) return 0;
-                if (aTime === -1) return 1;
-                if (bTime === -1) return -1;
-                return aTime - bTime;
-              })
-              .map((pd, idx) => {
-                const isTop3 = idx < 3;
-                const textColorClass = isTop3
-                  ? idx === 0
-                    ? "text-gold"
-                    : idx === 1
-                      ? "text-silver"
-                      : "text-bronze"
-                  : "";
-                const fontWeightClass = isTop3 ? "font-bold" : "";
-
-                return (
-                  <TableRow key={pd.uuid} className={`${textColorClass} ${fontWeightClass}`}>
-                    <TableCell className="w-1/12 hidden sm:table-cell">
-                      <Image
-                        className="mx-auto hidden sm:inline-block"
-                        alt="avatar"
-                        src={uuidToHead(pd.uuid)}
-                        width={24}
-                        height={24}
-                        unoptimized
-                      />
-                    </TableCell>
-                    <TableCell className="text-base">
-                      {uuidToNameMap[pd.uuid] || pd.uuid}
-                    </TableCell>
-                    <TableCell className="text-base">
-                      {isUsingPoints
-                        ? (pd as PlayerPoints).time === -1
-                          ? "DNF"
-                          : msToTime((pd as PlayerPoints).time)
-                        : (pd as PlayerData).time === -1
-                          ? "DNF"
-                          : msToTime((pd as PlayerData).time)
-                      }
-                    </TableCell>
-                    {isUsingPoints && (
-                      <TableCell className="text-base">
-                        {(pd as PlayerPoints).points}
+                  return (
+                    <TableRow key={pd.uuid} className={`${textColorClass} ${fontWeightClass}`}>
+                      <TableCell className="w-1/12 hidden sm:table-cell">
+                        <Image
+                          className="mx-auto hidden sm:inline-block"
+                          alt="avatar"
+                          src={uuidToHead(pd.uuid)}
+                          width={24}
+                          height={24}
+                          unoptimized
+                        />
                       </TableCell>
-                    )}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
+                      <TableCell className="text-base">
+                        {uuidToNameMap[pd.uuid] || pd.uuid}
+                      </TableCell>
+                      <TableCell className="text-base">
+                        {isUsingPoints
+                          ? (pd as PlayerPoints).time === -1
+                            ? "DNF"
+                            : msToTime((pd as PlayerPoints).time)
+                          : (pd as PlayerData).time === -1
+                            ? "DNF"
+                            : msToTime((pd as PlayerData).time)
+                        }
+                      </TableCell>
+                      {isUsingPoints && (
+                        <TableCell className="text-base">
+                          {(pd as PlayerPoints).points}
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
